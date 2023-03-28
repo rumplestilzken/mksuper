@@ -1,6 +1,10 @@
 # mksuper
 Guide and Scripts to help unmake and make a super partition
 
+These scripts assume you are on an ubuntu based distro. You may need to
+adjust the scripts or run the commands individually on your machine to get the
+desired results.
+
 ## Download your appropriate version of stock firmware.
 ## Titan Pocket
 [tee](https://drive.google.com/file/d/1HZZ84TOGcj6zQcGn5_o1i0CW5GfI6H4D/view?usp=share_link)
