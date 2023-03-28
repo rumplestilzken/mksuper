@@ -32,6 +32,7 @@ echo New super Size should be $new_super_size bytes
 
 if [ $new_super_size -gt $super_max_size ]; then
   echo WARNING: New super.img will be too large for your devices super partition. This is unsupported.
+  exit
 fi
 
 cd super
