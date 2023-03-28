@@ -28,7 +28,7 @@ cp $stock_rom_folder/super.img super/stock/super.img
 echo Creating super.ext4.img
 simg2img super/stock/super.img super/custom/super.ext4.img
 
-echo Unpacking super.ext.img
+echo Unpacking super.ext4.img
 cd super/stock/
 $here/lpunpack_and_lpmake/bin/lpunpack $here/super/custom/super.ext4.img
 cd $here
