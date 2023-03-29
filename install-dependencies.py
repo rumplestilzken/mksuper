@@ -16,7 +16,7 @@ def main():
         if "Ubuntu" in name or "Debian" in name:
             os.system("sudo apt install git libc++-dev clang g++ make libz-dev")
         else:
-            print("You need to manually install git libc++-dev, clang and g++ to continue with the process")
+            print("You need to manually install git libc++-dev, clang, g++, make and libz-dev to continue with the process")
             answer = input("Are these already installed?(Y,n):")
             if not answer == "" or answer == "Y" or answer == "y":
                 install_lpmake=False
