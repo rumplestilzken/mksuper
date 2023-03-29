@@ -24,7 +24,7 @@ def main():
     if not os.path.exists("./lpunpack_and_lpmake"):
         print("Installing lpunpack_and_lpmake")
         os.system("git clone --quiet https://github.com/rumplestilzken/lpunpack_and_lpmake.git lpunpack_and_lpmake")
-    if not os.path.exists("./lpunpack_and_lpmake/bin") and install_lpmake:
+    if os.path.exists("./lpunpack_and_lpmake/bin") and install_lpmake:
         print("Building lpunpack_and_lpmake")
         os.system("cd lpunpack_and_lpmake; ./make.sh; cd ..")
     if os.path.exists("./lpunpack_and_lpmake/bin") and install_lpmake:
