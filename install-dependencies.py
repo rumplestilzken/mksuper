@@ -14,7 +14,7 @@ def main():
     if answer == "" or answer == "Y" or answer == "y":
         name = subprocess.run(['uname', '-a'], capture_output=True, text=True).stdout
         if "Ubuntu" in name or "Debian" in name:
-            os.system("sudo apt install git libc++-dev clang g++")
+            os.system("sudo apt install git libc++-dev clang g++ make libz-dev")
         else:
             print("You need to manually install git libc++-dev, clang and g++ to continue with the process")
             answer = input("Are these already installed?(Y,n):")
