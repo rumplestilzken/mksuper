@@ -20,7 +20,7 @@ See [here](https://gist.github.com/rumplestilzken/186d1aaebf2d3927ddfae6f7619e57
     git clone https://github.com/rumplestilzken/mksuper.git mksuper
 
 ## Setup Scripts
-    chmod +x mksuper.sh install-dependencies.sh extract.sh
+    chmod +x mksuper.py install-dependencies.py extract.py
 
 ## Stock Rom
 Place your downloaded stock rom in the mksuper directory.
