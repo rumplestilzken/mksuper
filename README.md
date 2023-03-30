@@ -13,6 +13,9 @@ desired results.
 [tee](https://drive.google.com/file/d/16VHhHYQWZocxS1WzeEFCSRsBKH1G5cKN/view?usp=share_link)
 [eea](https://drive.google.com/file/d/1Bpfi5Uf4dQf-YgSbmd-0WMRMWILyxgS8/view?usp=share_link)
 
+## For those working on windows machines, you need to install WSL and an Ubuntu Image
+See [here](https://gist.github.com/rumplestilzken/186d1aaebf2d3927ddfae6f7619e5780#file-installing-ubuntu-on-wsl)
+
 ## Download Repository
     git clone https://github.com/rumplestilzken/mksuper.git mksuper
 
