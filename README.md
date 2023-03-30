@@ -28,17 +28,17 @@ Place your downloaded stock rom in the mksuper directory.
 ## Place your gargoyle image in the mksuper directory
 Copy your new bvN or bgN system image to the mksuper directory
 
-## Run install-dependencies.sh
+## Run install-dependencies.py
 This will ask for your admin password, it is installing apt packages, inspect the script if you have an issue and run the commands yourself.
 
-    ./install-dependencies.sh
+    ./install-dependencies.py
 
-## Run extract.sh
+## Run extract.py
 This will extract the super, system, vendor and product partitions, then copy them for update
 
-    ./extract.sh
+    ./extract.py
 
 ## mksuper
 This will package the super.new.img for your device
 
-    ./mksuper.sh
+    ./mksuper.py
