@@ -13,11 +13,14 @@ desired results.
 [tee](https://drive.google.com/file/d/16VHhHYQWZocxS1WzeEFCSRsBKH1G5cKN/view?usp=share_link)
 [eea](https://drive.google.com/file/d/1Bpfi5Uf4dQf-YgSbmd-0WMRMWILyxgS8/view?usp=share_link)
 
+## For those working on windows machines, you need to install WSL and an Ubuntu Image
+See [here](https://gist.github.com/rumplestilzken/186d1aaebf2d3927ddfae6f7619e5780#file-installing-ubuntu-on-wsl)
+
 ## Download Repository
     git clone https://github.com/rumplestilzken/mksuper.git mksuper
 
 ## Setup Scripts
-    chmod +x mksuper.sh install-dependencies.sh extract.sh
+    chmod +x mksuper.py install-dependencies.py extract.py
 
 ## Stock Rom
 Place your downloaded stock rom in the mksuper directory.
@@ -25,17 +28,17 @@ Place your downloaded stock rom in the mksuper directory.
 ## Place your gargoyle image in the mksuper directory
 Copy your new bvN or bgN system image to the mksuper directory
 
-## Run install-dependencies.sh
+## Run install-dependencies.py
 This will ask for your admin password, it is installing apt packages, inspect the script if you have an issue and run the commands yourself.
 
-    ./install-dependencies.sh
+    ./install-dependencies.py
 
-## Run extract.sh
+## Run extract.py
 This will extract the super, system, vendor and product partitions, then copy them for update
 
-    ./extract.sh
+    ./extract.py
 
 ## mksuper
 This will package the super.new.img for your device
 
-    ./mksuper.sh
+    ./mksuper.py
