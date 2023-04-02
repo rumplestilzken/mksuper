@@ -33,8 +33,6 @@ def main():
     print("Unzipping Stock rom to " + stock_rom_folder)
     with ZipFile(stock_rom_path) as zObject:
         zObject.extract(stock_rom_folder + "/super.img", here)
-        zObject.extract(stock_rom_folder + "/vendor.img", here)
-        zObject.extract(stock_rom_folder + "/product.img", here)
         zObject.extract(stock_rom_folder+"/boot.img",  here)
         zObject.extract(stock_rom_folder+"/vbmeta.img",  here)
         zObject.extract(stock_rom_folder+"/vbmeta_system.img",  here)
