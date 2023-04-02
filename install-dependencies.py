@@ -24,15 +24,15 @@ def main():
     if not os.path.exists("./lpunpack_and_lpmake"):
         print("Installing lpunpack_and_lpmake")
         os.system("git clone --quiet https://github.com/rumplestilzken/lpunpack_and_lpmake.git lpunpack_and_lpmake")
-    if os.path.exists("./lpunpack_and_lpmake/bin") and install_lpmake:
+    if os.path.exists("./lpunpack_and_lpmake/bin"):
         print("Building lpunpack_and_lpmake")
         os.system("cd lpunpack_and_lpmake; ./make.sh; cd ..")
-    if os.path.exists("./lpunpack_and_lpmake/bin") and install_lpmake:
+    if os.path.exists("./lpunpack_and_lpmake/bin"):
         os.system("chmod +x lpunpack_and_lpmake/bin/*")
     if not os.path.exists("./simg2img"):
         print("Installing simg2img")
         os.system("git clone --quiet https://github.com/rumplestilzken/simg2img.git simg2img")
-    if not os.path.exists("./simg2img/simg2img") and install_simg2img:
+    if not os.path.exists("./simg2img/simg2img"):
         print("Building simg2img")
         os.system("cd simg2img; make; cd ..;")
     print("Script Complete")
