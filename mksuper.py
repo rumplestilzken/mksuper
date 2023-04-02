@@ -61,7 +61,7 @@ def main():
     lpmake_command+= " --partition product:readonly:" + str(product_size) + ":main --image product=custom/product.img"
     lpmake_command+= " --sparse --output " + here + "/super/super.new.img"
 
-    #print(lpmake_command)
+    print("lpmake command:\n\t" + lpmake_command)
     os.system(lpmake_command)
 
     print("New super image created: "+ here +"/super/super.new.img")
