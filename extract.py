@@ -8,25 +8,17 @@ import shutil
 def main():
     here = os.path.dirname(os.path.realpath(__file__))
     stock_rom_path=""
-    gargoyle_rom_path = ""
 
     for file in os.listdir(here):
         if file.endswith(".zip"):
             stock_rom_path=file
-        if file.endswith(".img"):
-            gargoyle_rom_path=file
+            break
 
     if stock_rom_path == "":
         print("No Stock Rom Found.")
         quit()
     else:
         print("Stock Rom Found:'" + stock_rom_path + "'")
-
-    if gargoyle_rom_path == "":
-        print("No gargoyle system image Found.")
-        quit()
-    else:
-        print("gargoyle system image Found:'" + gargoyle_rom_path + "'")
 
     stock_rom_folder=os.path.splitext(stock_rom_path)[0]
 
@@ -63,7 +55,6 @@ def main():
     os.system("cd super/stock/;" + here +"/lpunpack_and_lpmake/bin/lpunpack super.ext4.img; cd ../..;")
 
     print("Copying images to super/custom")
-    shutil.copyfile(gargoyle_rom_path, "super/custom/system.img")
     shutil.copyfile("super/stock/vendor.img", "super/custom/vendor.img")
     shutil.copyfile("super/stock/product.img", "super/custom/product.img")
 

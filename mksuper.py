@@ -1,34 +1,52 @@
 #!/usr/bin/env python3
 
-import platform
 import os
-import sys
-import subprocess
+import shutil
+from enum import IntEnum
+
+class DeviceType(IntEnum):
+    NotSet = 1
+    Pocket = 2
+    Slim = 3
 
 def main():
     here = os.path.dirname(os.path.realpath(__file__))
     super_max_size=0
+    gargoyle_rom_path = ""
 
     print("Starting Script")
 
-    menu={}
-    menu['1']="Pocket"
-    menu['2']="Slim"
+    for file in os.listdir(here):
+        if file.endswith(".img"):
+            gargoyle_rom_path=file
+            break
 
-    for menuItem in menu:
-        print(menuItem, menu[menuItem])
-
-    selection=input("Please Select which device you are working on:")
-
-    if not selection in ['1', '2']:
-        print("Please select an option from the list.")
+    if gargoyle_rom_path == "":
+        print("No gargoyle system image Found.")
         quit()
+    else:
+        print("gargoyle system image Found:'" + gargoyle_rom_path + "'")
 
-    match selection:
-        case '1':
+    dev = DeviceType.NotSet
+
+    if "slim" in gargoyle_rom_path:
+        dev = DeviceType.Slim
+    if "pocket" in gargoyle_rom_path:
+        dev = DeviceType.Pocket
+
+    match dev:
+        case DeviceType.Slim:
             super_max_size=4831838208
-        case '2':
+        case DeviceType.Pocket:
             super_max_size=4831838208
+        case _:
+            print("Device Not Detected")
+            quit()
+
+    print("Device Type: '" + dev.name + "'")
+
+    print("Copying '" + gargoyle_rom_path + "' to super/custom/system.img")
+    shutil.copyfile(gargoyle_rom_path, "super/custom/system.img")
 
     print("Super Max Size '" + str(super_max_size) + "' bytes")
 
