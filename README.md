@@ -12,6 +12,9 @@ desired results.
 ## Titan Slim
 [tee](https://drive.google.com/file/d/16VHhHYQWZocxS1WzeEFCSRsBKH1G5cKN/view?usp=share_link)
 [eea](https://drive.google.com/file/d/1Bpfi5Uf4dQf-YgSbmd-0WMRMWILyxgS8/view?usp=share_link)
+## Tank
+[tee](https://drive.google.com/file/d/1biqPJY7XrUfMmkInx-Ub72W-SrUua3tr/view?usp=share_link)
+[eea](https://drive.google.com/file/d/1lkQJk4sJPAtet-1iSRQ5KO_5l0FH-Llk/view?usp=share_link)
 
 ## For those working on windows machines, you need to install WSL and an Ubuntu Image
 See [here](https://gist.github.com/rumplestilzken/186d1aaebf2d3927ddfae6f7619e5780#file-installing-ubuntu-on-wsl)
