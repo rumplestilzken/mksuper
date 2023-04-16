@@ -8,6 +8,7 @@ class DeviceType(IntEnum):
     NotSet = 1
     Pocket = 2
     Slim = 3
+    Tank = 4
 
 def main():
     here = os.path.dirname(os.path.realpath(__file__))
@@ -33,11 +34,15 @@ def main():
         dev = DeviceType.Slim
     if "pocket" in gargoyle_rom_path:
         dev = DeviceType.Pocket
+    if "tank" in gargoyle_rom_path:
+        dev = DeviceType.Tank
 
     match dev:
         case DeviceType.Slim:
             super_max_size=4831838208
         case DeviceType.Pocket:
+            super_max_size=4831838208
+        case DeviceType.Tank:
             super_max_size=4831838208
         case _:
             print("Device Not Detected")
