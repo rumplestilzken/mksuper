@@ -32,8 +32,8 @@ def main():
         zObject.extract(stock_rom_folder + "/vbmeta_vendor.img", here)
         try:
             zObject.extract(stock_rom_folder + "/vendor_boot.img", here)
-        except OSError as error:
-            error
+        except:
+            ""
     zObject.close();
 
     try:

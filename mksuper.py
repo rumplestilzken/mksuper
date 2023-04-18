@@ -2,43 +2,84 @@
 
 import os
 import shutil
-from enum import IntEnum
+from enum import Enum
+from argparse import ArgumentParser, RawDescriptionHelpFormatter, Action
 
 
-class DeviceType(IntEnum):
-    NotSet = 1
-    Pocket = 2
-    Slim = 3
-    Tank = 4
+class DeviceType(Enum):
+    NotSet = ""
+    Pocket = "pocket"
+    Slim = "slim"
+    Tank = "tank"
+
+
+class EnumAction(Action):
+    """Argparse action for handling Enums"""
+
+    def __init__(self, **kwargs):
+        enum_type = kwargs.pop("type", None)
+        if enum_type is None:
+            raise ValueError("Type must be assigned an Enum when using EnumAction")
+
+        if not issubclass(enum_type, Enum):
+            raise TypeError("Type must be an Enum when using EnumAction")
+
+        kwargs.setdefault("choices", tuple(e.value for e in enum_type))
+
+        super(EnumAction, self).__init__(**kwargs)
+        self._enum = enum_type
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        value = self._enum(values)
+        setattr(namespace, self.dest, value)
+
+
+def usage():
+    print("""mksuper.py
+    -repack: repacks stock image
+    -dev: slim, pocket, tank, automatically detected from gargoyle img if provided.""")
+
+
+def parse_arguments():
+    parser = ArgumentParser(formatter_class=RawDescriptionHelpFormatter, epilog=usage())
+    parser.add_argument("-repack", required=False, action="store_false", default=None)
+    parser.add_argument("-dev", required=False, type=DeviceType, action=EnumAction, default=DeviceType.NotSet)
+    return parser.parse_args()
 
 
 def main():
+    args = parse_arguments()
+
     here = os.path.dirname(os.path.realpath(__file__))
     super_max_size = 0
     gargoyle_rom_path = ""
 
     print("Starting Script")
 
-    for file in os.listdir(here):
-        if file.endswith(".img"):
-            gargoyle_rom_path = file
-            break
+    if args.repack is None:
+        for file in os.listdir(here):
+            if file.endswith(".img"):
+                gargoyle_rom_path = file
+                break
 
-    if gargoyle_rom_path == "":
-        print("No gargoyle system image Found.")
-        quit()
-    else:
-        print("gargoyle system image Found:'" + gargoyle_rom_path + "'")
+        if gargoyle_rom_path == "":
+            print("No gargoyle system image Found.")
+            quit()
+        else:
+            print("gargoyle system image Found:'" + gargoyle_rom_path + "'")
 
     dev = DeviceType.NotSet
     is_seamless_update = False
 
-    if "slim" in gargoyle_rom_path:
-        dev = DeviceType.Slim
-    if "pocket" in gargoyle_rom_path:
-        dev = DeviceType.Pocket
-    if "tank" in gargoyle_rom_path:
-        dev = DeviceType.Tank
+    if args.dev == DeviceType.NotSet:
+        if "slim" in gargoyle_rom_path:
+            dev = DeviceType.Slim
+        if "pocket" in gargoyle_rom_path:
+            dev = DeviceType.Pocket
+        if "tank" in gargoyle_rom_path:
+            dev = DeviceType.Tank
+    else:
+        dev = args.dev
 
     match dev:
         case DeviceType.Slim:
@@ -56,14 +97,24 @@ def main():
 
     print("Device Type: '" + dev.name + "'")
 
-    if not dev == DeviceType.Tank:
-        print("Copying '" + gargoyle_rom_path + "' to super/custom/system.img")
-        shutil.copyfile(gargoyle_rom_path, "super/custom/system.img")
-    else:
-        print("Copying '" + gargoyle_rom_path + "' to super/custom/system_a.img")
-        shutil.copyfile(gargoyle_rom_path, "super/custom/system_a.img")
-        print("Copying 'super/stock/system_a.img' to super/custom/system_b.img")
-        shutil.copyfile("super/stock/system_a.img", "super/custom/system_b.img")
+    if args.repack is None:
+        if not dev == DeviceType.Tank:
+            print("Copying '" + gargoyle_rom_path + "' to super/custom/system.img")
+            shutil.copyfile(gargoyle_rom_path, "super/custom/system.img")
+        else:
+            print("Copying '" + gargoyle_rom_path + "' to super/custom/system_a.img")
+            shutil.copyfile(gargoyle_rom_path, "super/custom/system_a.img")
+            print("Copying 'super/stock/system_a.img' to super/custom/system_b.img")
+            shutil.copyfile("super/stock/system_a.img", "super/custom/system_b.img")
+    else:  # Repack
+        if not dev == DeviceType.Tank:
+            print("Copying 'super/stock/system.img' to super/custom/system.img")
+            shutil.copyfile("super/stock/system.img", "super/custom/system.img")
+        else:
+            print("Copying 'super/stock/system_a.img' to super/custom/system_a.img")
+            shutil.copyfile("super/stock/system_a.img", "super/custom/system_a.img")
+            print("Copying 'super/stock/system_b.img' to super/custom/system_b.img")
+            shutil.copyfile("super/stock/system_b.img", "super/custom/system_b.img")
 
     print("Super Max Size '" + str(super_max_size) + "' bytes")
 
@@ -112,18 +163,18 @@ def main():
         print("WARNING: New super.img will be too large for your devices super partition. This is unsupported.")
         quit()
 
-    if is_seamless_update:
-        if default_size > 0:
-            print("default group is larger than maximum allowed. This is unsupported.")
-            quit()
-        if main_a_size > main_a_max_size:
-            print("main_a group is greater than ('" + str(main_a_size) +
-                  "') the maximum allowed('" + str(main_a_max_size) + "'). This is unsupported.")
-            quit()
-        if main_b_size > main_b_max_size:
-            print("main_b group is greater than ('" + str(main_b_size) +
-                  "') the maximum allowed('" + str(main_b_max_size) + "'). This is unsupported.")
-            quit()
+    #    if is_seamless_update:
+    #        if default_size > 0:
+    #            print("default group is larger than maximum allowed. This is unsupported.")
+    #            quit()
+    #        if main_a_size > main_a_max_size:
+    #            print("main_a group is greater than ('" + str(main_a_size) +
+    #                  "') the maximum allowed('" + str(main_a_max_size) + "'). This is unsupported.")
+    #            quit()
+    #        if main_b_size > main_b_max_size:
+    #            print("main_b group is greater than ('" + str(main_b_size) +
+    #                  "') the maximum allowed('" + str(main_b_max_size) + "'). This is unsupported.")
+    #            quit()
 
     lpmake_command = "cd super;"
     lpmake_command += here + "/lpunpack_and_lpmake/bin/lpmake"
@@ -134,10 +185,10 @@ def main():
 
     if not is_seamless_update:
         lpmake_command += " --group=main:" + str(group_size)
-        lpmake_command += " --partition system:readonly:" + str(system_size) + ":main --image system=custom/system.img"
-        lpmake_command += " --partition vendor:readonly:" + str(vendor_size) + ":main --image vendor=custom/vendor.img"
-        lpmake_command += " --partition product:readonly:" + str(product_size) + ":main --image " \
-                                                                                 "product=custom/product.img"
+        lpmake_command += " --partition system:none:" + str(system_size) + ":main --image system=custom/system.img"
+        lpmake_command += " --partition vendor:none:" + str(vendor_size) + ":main --image vendor=custom/vendor.img"
+        lpmake_command += " --partition product:none:" + str(product_size) + ":main --image " \
+                                                                             "product=custom/product.img"
     else:
         # lpmake_command += " --group default:" + str(default_size)
         lpmake_command += " --group=main_a:" + str(main_a_size)
@@ -149,12 +200,11 @@ def main():
         lpmake_command += " --partition product_b:none:" + str(product_b_size) + ":main_b --image " \
                                                                                  "product_b=custom/product_b.img"
         lpmake_command += " --partition system_a:none:" + str(system_a_size) + ":main_a --image " \
-                                                                                   "system_a=custom/system_a.img"
+                                                                               "system_a=custom/system_a.img"
         lpmake_command += " --partition system_b:none:" + str(system_b_size) + ":main_b --image " \
                                                                                "system_b=custom/system_b.img"
         lpmake_command += " --partition vendor_a:none:" + str(vendor_a_size) + ":main_a --image " \
-                                                                                   "vendor_a=custom/vendor_a.img"
-
+                                                                               "vendor_a=custom/vendor_a.img"
 
     lpmake_command += " --sparse --output " + here + "/super/super.new.img"
 
@@ -162,6 +212,9 @@ def main():
     os.system(lpmake_command + "\n")
 
     print("New super image created: " + here + "/super/super.new.img")
+
+    if not args.repack is None:
+        print("REPACK COMPLETE")
 
     print("Script Complete")
 
