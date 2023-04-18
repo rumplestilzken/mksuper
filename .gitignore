@@ -1,8 +1,4 @@
 **/*.img
 **/*.zip
 lpunpack_and_lpmake/
-/lpunpack_and_lpmake/bin/lpadd
-/lpunpack_and_lpmake/bin/lpdump
-/lpunpack_and_lpmake/bin/lpflash
-/lpunpack_and_lpmake/bin/lpmake
-/lpunpack_and_lpmake/bin/lpunpack
+simg2img/
