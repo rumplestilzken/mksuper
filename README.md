@@ -22,9 +22,6 @@ See [here](https://gist.github.com/rumplestilzken/186d1aaebf2d3927ddfae6f7619e57
 ## Download Repository
     git clone https://github.com/rumplestilzken/mksuper.git mksuper
 
-## Setup Scripts
-    chmod +x mksuper.py install-dependencies.py extract.py
-
 ## Stock Rom
 Place your downloaded stock rom in the mksuper directory.
 
@@ -34,14 +31,14 @@ Copy your new bvN or bgN system image to the mksuper directory
 ## Run install-dependencies.py
 This will ask for your admin password, it is installing apt packages, inspect the script if you have an issue and run the commands yourself.
 
-    ./install-dependencies.py
+    python install-dependencies.py
 
 ## Run extract.py
 This will extract the super, system, vendor and product partitions, then copy them for update
 
-    ./extract.py
+    python extract.py
 
 ## mksuper
 This will package the super.new.img for your device
 
-    ./mksuper.py
+    python mksuper.py
