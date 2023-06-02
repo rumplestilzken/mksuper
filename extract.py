@@ -2,8 +2,10 @@
 
 import subprocess
 import os
+import tarfile
 from zipfile import ZipFile
 import shutil
+import tarfile
 
 
 def main():
@@ -72,6 +74,17 @@ def main():
         shutil.copyfile("super/stock/vendor_b.img", "super/custom/vendor_b.img")
         shutil.copyfile("super/stock/product_a.img", "super/custom/product_a.img")
         shutil.copyfile("super/stock/product_b.img", "super/custom/product_b.img")
+
+    tar = ""
+    for file in os.listdir(here):
+        if file.endswith(".tar.gz"):
+            tar = file
+            break
+
+    if not tar == "":
+        print("Extracting gargoyle GSI '" + tar + "'")
+        with tarfile.open(tar, "r") as tf:
+            tf.extractall(path=here+"/")
 
     print("Script Complete")
 

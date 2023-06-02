@@ -3,7 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lpunpack_and_lpmake" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/sas-creator" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/simg2img" vcs="Git" />
   </component>
 </project>
