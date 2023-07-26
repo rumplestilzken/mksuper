@@ -11,6 +11,8 @@ class DeviceType(Enum):
     Pocket = "pocket"
     Slim = "slim"
     Tank = "tank"
+    Jelly2E = "jelly2e"
+    AtomL = "atoml"
 
 
 class EnumAction(Action):
@@ -78,6 +80,10 @@ def main():
             dev = DeviceType.Pocket
         if "tank" in gargoyle_rom_path:
             dev = DeviceType.Tank
+        if "jelly2e" in gargoyle_rom_path:
+            dev = DeviceType.Jelly2E
+        if "atoml" in gargoyle_rom_path:
+            dev = DeviceType.AtomL
     else:
         dev = args.dev
 
@@ -86,7 +92,14 @@ def main():
             super_max_size = 4831838208
         case DeviceType.Pocket:
             super_max_size = 4831838208
+        case DeviceType.AtomL:
+            super_max_size = 4831838208
         case DeviceType.Tank:
+            super_max_size = 9663676416
+            main_a_max_size = 4831838208
+            main_b_max_size = 4831838208
+            is_seamless_update = True
+        case DeviceType.Jelly2E:
             super_max_size = 9663676416
             main_a_max_size = 4831838208
             main_b_max_size = 4831838208
@@ -98,7 +111,7 @@ def main():
     print("Device Type: '" + dev.name + "'")
 
     if args.repack is None:
-        if not dev == DeviceType.Tank:
+        if not dev == DeviceType.Tank and not dev == DeviceType.Jelly2E:
             print("Copying '" + gargoyle_rom_path + "' to super/custom/system.img")
             shutil.copyfile(gargoyle_rom_path, "super/custom/system.img")
         else:
@@ -107,7 +120,7 @@ def main():
             print("Copying 'super/stock/system_a.img' to super/custom/system_b.img")
             shutil.copyfile("super/stock/system_a.img", "super/custom/system_b.img")
     else:  # Repack
-        if not dev == DeviceType.Tank:
+        if not dev == DeviceType.Tank and not dev == DeviceType.Jelly2E:
             print("Copying 'super/stock/system.img' to super/custom/system.img")
             shutil.copyfile("super/stock/system.img", "super/custom/system.img")
         else:
