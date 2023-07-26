@@ -39,7 +39,7 @@ class EnumAction(Action):
 def usage():
     print("""mksuper.py
     -repack: repacks stock image
-    -dev: slim, pocket, tank, automatically detected from gargoyle img if provided.""")
+    -dev: slim, pocket, tank, jelly2e, atoml automatically detected from gargoyle img if provided.""")
 
 
 def parse_arguments():
