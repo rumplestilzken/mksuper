@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-import subprocess
 import os
-import tarfile
+import lzma
 from zipfile import ZipFile
 import shutil
 import tarfile
@@ -67,24 +66,42 @@ def main():
 
     print("Copying images to super/custom")
     if not is_seamless_update:
+        # Titan Pocket
+        # Atom L
         shutil.copyfile("super/stock/vendor.img", "super/custom/vendor.img")
         shutil.copyfile("super/stock/product.img", "super/custom/product.img")
     else:
+        # Tank
+        # Jelly 2E
         shutil.copyfile("super/stock/vendor_a.img", "super/custom/vendor_a.img")
         shutil.copyfile("super/stock/vendor_b.img", "super/custom/vendor_b.img")
         shutil.copyfile("super/stock/product_a.img", "super/custom/product_a.img")
         shutil.copyfile("super/stock/product_b.img", "super/custom/product_b.img")
 
-    tar = ""
+    # Get Compressed File
+    compressed_file = ""
+    tar = False
+    xz = False
     for file in os.listdir(here):
         if file.endswith(".tar.gz"):
-            tar = file
+            compressed_file = file
+            tar = True
+            break
+        if file.endswith(".xz"):
+            compressed_file = file
+            xz = True
             break
 
-    if not tar == "":
-        print("Extracting gargoyle GSI '" + tar + "'")
-        with tarfile.open(tar, "r") as tf:
-            tf.extractall(path=here+"/")
+    # Uncompress compressed_file
+    if not compressed_file == "" and tar:
+        print("Extracting gargoyle GSI '" + compressed_file + "'")
+        with tarfile.open(compressed_file, "r") as tf:
+            tf.extractall(path=here + "/")
+    elif not compressed_file == "" and xz:
+        print("Extracting gargoyle GSI '" + compressed_file + "'")
+        with lzma.open(compressed_file) as f, open(here + "/" + compressed_file.strip(".xz"), 'wb') as fout:
+            file_content = f.read()
+            fout.write(file_content)
 
     print("Script Complete")
 
