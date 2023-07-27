@@ -7,6 +7,7 @@ desired results.
 
 ## Supported Devices
 * Titan Pocket
+* Titan Slim
 * Jelly 2E
 * Atom L
 * Tank
