@@ -138,13 +138,13 @@ def main():
         system_size = os.path.getsize(here + "/super/custom/system.img")
         product_size = os.path.getsize(here + "/super/custom/product.img")
         vendor_size = os.path.getsize(here + "/super/custom/vendor.img")
-        group_size = product_size + vendor_size + system_size;
+        group_size = product_size + vendor_size + system_size
         print("New product Size '" + str(product_size) + "' bytes")
         print("New vendor Size '" + str(vendor_size) + "' bytes")
         print("New system Size '" + str(system_size) + "' bytes")
         print("New group Size '" + str(group_size) + "' bytes")
         metadata_slots = 2
-        super_size = group_size + metadata_size;
+        super_size = group_size + metadata_size
     else:
         system_a_size = os.path.getsize(here + "/super/custom/system_a.img")
         system_b_size = os.path.getsize(here + "/super/custom/system_b.img")
@@ -226,7 +226,7 @@ def main():
 
     print("New super image created: " + here + "/super/super.new.img")
 
-    if not args.repack is None:
+    if args.repack is not None:
         print("REPACK COMPLETE")
 
     print("Script Complete")
