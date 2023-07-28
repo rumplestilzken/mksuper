@@ -39,13 +39,18 @@ class EnumAction(Action):
 def usage():
     print("""mksuper.py
     -repack: repacks stock image
-    -dev: slim, pocket, tank, jelly2e, atoml automatically detected from gargoyle img if provided.""")
+    -dev: slim, pocket, tank, jelly2e, atoml automatically detected from gargoyle img if provided.
+    -gsi: path to raw GSI image
+    -out: output path of super image """)
 
 
 def parse_arguments():
     parser = ArgumentParser(formatter_class=RawDescriptionHelpFormatter, epilog=usage())
     parser.add_argument("-repack", required=False, action="store_false", default=None)
     parser.add_argument("-dev", required=False, type=DeviceType, action=EnumAction, default=DeviceType.NotSet)
+    parser.add_argument("-gsi", required=False, type=str, default=None)
+    parser.add_argument("-out", required=False, type=str, default=None)
+    parser.add_argument("-super_path", required=False, type=str, default=None)
     return parser.parse_args()
 
 
@@ -63,6 +68,9 @@ def main():
             if file.endswith(".img"):
                 gargoyle_rom_path = file
                 break
+
+        if args.gsi is not None:
+            gargoyle_rom_path = args.gsi
 
         if gargoyle_rom_path == "":
             print("No gargoyle system image Found.")
@@ -110,24 +118,28 @@ def main():
 
     print("Device Type: '" + dev.name + "'")
 
+    super_path = here + "/super/"
+    if args.super_path is not None:
+        super_path = args.super_path + "/"
+
     if args.repack is None:
         if not dev == DeviceType.Tank and not dev == DeviceType.Jelly2E:
-            print("Copying '" + gargoyle_rom_path + "' to super/custom/system.img")
-            shutil.copyfile(gargoyle_rom_path, "super/custom/system.img")
+            print("Copying '" + gargoyle_rom_path + "' to " + super_path +"/custom/system.img")
+            shutil.copyfile(gargoyle_rom_path, super_path + "/custom/system.img")
         else:
-            print("Copying '" + gargoyle_rom_path + "' to super/custom/system_a.img")
-            shutil.copyfile(gargoyle_rom_path, "super/custom/system_a.img")
-            print("Copying 'super/stock/system_a.img' to super/custom/system_b.img")
-            shutil.copyfile("super/stock/system_a.img", "super/custom/system_b.img")
+            print("Copying '" + gargoyle_rom_path + "' to " + super_path + "/custom/system_a.img")
+            shutil.copyfile(gargoyle_rom_path, super_path + "/custom/system_a.img")
+            print("Copying '" + super_path + "/stock/system_a.img' to " + super_path + "/custom/system_b.img")
+            shutil.copyfile(super_path + "/stock/system_a.img", super_path + "/custom/system_b.img")
     else:  # Repack
         if not dev == DeviceType.Tank and not dev == DeviceType.Jelly2E:
-            print("Copying 'super/stock/system.img' to super/custom/system.img")
-            shutil.copyfile("super/stock/system.img", "super/custom/system.img")
+            print("Copying '" + super_path + "/stock/system.img' to " + super_path + "/custom/system.img")
+            shutil.copyfile(super_path + "/stock/system.img", super_path + "/custom/system.img")
         else:
             print("Copying 'super/stock/system_a.img' to super/custom/system_a.img")
-            shutil.copyfile("super/stock/system_a.img", "super/custom/system_a.img")
+            shutil.copyfile(super_path + "/stock/system_a.img", super_path + "/custom/system_a.img")
             print("Copying 'super/stock/system_b.img' to super/custom/system_b.img")
-            shutil.copyfile("super/stock/system_b.img", "super/custom/system_b.img")
+            shutil.copyfile(super_path + "/stock/system_b.img", super_path + "/custom/system_b.img")
 
     print("Super Max Size '" + str(super_max_size) + "' bytes")
 
@@ -135,9 +147,9 @@ def main():
     metadata_size = 65536
 
     if not is_seamless_update:
-        system_size = os.path.getsize(here + "/super/custom/system.img")
-        product_size = os.path.getsize(here + "/super/custom/product.img")
-        vendor_size = os.path.getsize(here + "/super/custom/vendor.img")
+        system_size = os.path.getsize(super_path + "/custom/system.img")
+        product_size = os.path.getsize(super_path + "/custom/product.img")
+        vendor_size = os.path.getsize(super_path + "/custom/vendor.img")
         group_size = product_size + vendor_size + system_size
         print("New product Size '" + str(product_size) + "' bytes")
         print("New vendor Size '" + str(vendor_size) + "' bytes")
@@ -146,12 +158,12 @@ def main():
         metadata_slots = 2
         super_size = group_size + metadata_size
     else:
-        system_a_size = os.path.getsize(here + "/super/custom/system_a.img")
-        system_b_size = os.path.getsize(here + "/super/custom/system_b.img")
-        product_a_size = os.path.getsize(here + "/super/custom/product_a.img")
-        product_b_size = os.path.getsize(here + "/super/custom/product_b.img")
-        vendor_a_size = os.path.getsize(here + "/super/custom/vendor_a.img")
-        vendor_b_size = os.path.getsize(here + "/super/custom/vendor_b.img")
+        system_a_size = os.path.getsize(super_path + "/custom/system_a.img")
+        system_b_size = os.path.getsize(super_path + "/custom/system_b.img")
+        product_a_size = os.path.getsize(super_path + "/custom/product_a.img")
+        product_b_size = os.path.getsize(super_path + "/custom/product_b.img")
+        vendor_a_size = os.path.getsize(super_path + "/custom/vendor_a.img")
+        vendor_b_size = os.path.getsize(super_path + "/custom/vendor_b.img")
         main_a_size = system_a_size + product_a_size + vendor_a_size
         main_b_size = system_b_size + product_b_size + vendor_b_size
         default_size = 0
@@ -189,7 +201,7 @@ def main():
     #                  "') the maximum allowed('" + str(main_b_max_size) + "'). This is unsupported.")
     #            quit()
 
-    lpmake_command = "cd super;"
+    lpmake_command = "cd " + super_path + ";"
     lpmake_command += here + "/lpunpack_and_lpmake/bin/lpmake"
     lpmake_command += " --metadata-size " + str(metadata_size)
     lpmake_command += " --super-name super "
@@ -198,28 +210,32 @@ def main():
 
     if not is_seamless_update:
         lpmake_command += " --group=main:" + str(group_size)
-        lpmake_command += " --partition system:none:" + str(system_size) + ":main --image system=custom/system.img"
-        lpmake_command += " --partition vendor:none:" + str(vendor_size) + ":main --image vendor=custom/vendor.img"
+        lpmake_command += " --partition system:none:" + str(system_size) + ":main --image system=" + super_path + "/custom/system.img"
+        lpmake_command += " --partition vendor:none:" + str(vendor_size) + ":main --image vendor=" + super_path + "/custom/vendor.img"
         lpmake_command += " --partition product:none:" + str(product_size) + ":main --image " \
-                                                                             "product=custom/product.img"
+                                                                             "product=" + super_path + "/custom/product.img"
     else:
         # lpmake_command += " --group default:" + str(default_size)
         lpmake_command += " --group=main_a:" + str(main_a_size)
         lpmake_command += " --group main_b:" + str(main_b_size)
         lpmake_command += " --partition vendor_b:none:" + str(vendor_b_size) + ":main_b --image " \
-                                                                               "vendor_b=custom/vendor_b.img"
+                                                                               "vendor_b=" + super_path + "/custom/vendor_b.img"
         lpmake_command += " --partition product_a:none:" + str(product_a_size) + ":main_a --image " \
-                                                                                 "product_a=custom/product_a.img"
+                                                                                 "product_a=" + super_path + "/custom/product_a.img"
         lpmake_command += " --partition product_b:none:" + str(product_b_size) + ":main_b --image " \
-                                                                                 "product_b=custom/product_b.img"
+                                                                                 "product_b=" + super_path + "/custom/product_b.img"
         lpmake_command += " --partition system_a:none:" + str(system_a_size) + ":main_a --image " \
-                                                                               "system_a=custom/system_a.img"
+                                                                               "system_a=" + super_path + "/custom/system_a.img"
         lpmake_command += " --partition system_b:none:" + str(system_b_size) + ":main_b --image " \
-                                                                               "system_b=custom/system_b.img"
+                                                                               "system_b=" + super_path + "/custom/system_b.img"
         lpmake_command += " --partition vendor_a:none:" + str(vendor_a_size) + ":main_a --image " \
-                                                                               "vendor_a=custom/vendor_a.img"
+                                                                               "vendor_a=" + super_path + "/custom/vendor_a.img"
+    output_path = here + "/super/super.new.img"
 
-    lpmake_command += " --sparse --output " + here + "/super/super.new.img"
+    if args.out is not None:
+        output_path = args.out
+
+    lpmake_command += " --sparse --output " + output_path
 
     print("lpmake command:\n\t" + lpmake_command)
     os.system(lpmake_command + "\n")
