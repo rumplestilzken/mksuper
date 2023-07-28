@@ -5,9 +5,24 @@ import lzma
 from zipfile import ZipFile
 import shutil
 import tarfile
+from argparse import ArgumentParser, RawDescriptionHelpFormatter, Action
+
+
+def usage():
+    print("""extract.py
+    -stock: extracted stock image location
+    -out : extracted super contents location""")
+
+
+def parse_arguments():
+    parser = ArgumentParser(formatter_class=RawDescriptionHelpFormatter, epilog=usage())
+    parser.add_argument("-stock", required=False, type=str, default=None)
+    parser.add_argument("-out", required=False, type=str, default=None)
+    return parser.parse_args()
 
 
 def main():
+    args = parse_arguments()
     here = os.path.dirname(os.path.realpath(__file__))
     stock_rom_path = ""
 
@@ -15,6 +30,9 @@ def main():
         if file.endswith(".zip"):
             stock_rom_path = file
             break
+
+    if args.stock is not None:
+        stock_rom_path = args.stock
 
     if stock_rom_path == "":
         print("No Stock Rom Found.")
@@ -24,20 +42,22 @@ def main():
 
     stock_rom_folder = os.path.splitext(stock_rom_path)[0]
 
-    print("Unzipping Stock rom to " + stock_rom_folder)
-    with ZipFile(stock_rom_path) as zObject:
-        zObject.extract(stock_rom_folder + "/super.img", here)
-        zObject.extract(stock_rom_folder + "/boot.img", here)
-        zObject.extract(stock_rom_folder + "/vbmeta.img", here)
-        zObject.extract(stock_rom_folder + "/vbmeta_system.img", here)
-        zObject.extract(stock_rom_folder + "/vbmeta_vendor.img", here)
-        try:
-            zObject.extract(stock_rom_folder + "/vendor_boot.img", here)
-        except:
-            ""
-    zObject.close();
+    if args.stock is None:
+        print("Unzipping Stock rom to " + stock_rom_folder)
+        with ZipFile(stock_rom_path) as zObject:
+            zObject.extract(stock_rom_folder + "/super.img", here)
+            zObject.extract(stock_rom_folder + "/boot.img", here)
+            zObject.extract(stock_rom_folder + "/vbmeta.img", here)
+            zObject.extract(stock_rom_folder + "/vbmeta_system.img", here)
+            zObject.extract(stock_rom_folder + "/vbmeta_vendor.img", here)
+            try:
+                zObject.extract(stock_rom_folder + "/vendor_boot.img", here)
+            except:
+                ""
+        zObject.close();
 
     try:
+        os.system("rm -rf super")
         os.mkdir(here + "/super")
     except OSError as error:
         error
@@ -52,7 +72,11 @@ def main():
         error
 
     print("Copying super to super/stock")
-    shutil.copyfile(here + "/" + stock_rom_folder + "/super.img", here + "/super/stock/super.img")
+    stock_rom_location = here + "/" + stock_rom_folder
+    if args.stock is not None:
+        stock_rom_location = stock_rom_folder
+
+    shutil.copyfile(stock_rom_location + "/super.img", here + "/super/stock/super.img")
 
     print("Unpacking super.img to ext4.img")
     os.system(here + "/simg2img/simg2img super/stock/super.img super/stock/super.ext4.img")
@@ -77,6 +101,11 @@ def main():
         shutil.copyfile("super/stock/vendor_b.img", "super/custom/vendor_b.img")
         shutil.copyfile("super/stock/product_a.img", "super/custom/product_a.img")
         shutil.copyfile("super/stock/product_b.img", "super/custom/product_b.img")
+
+    if args.out is not None:
+        print("Copying super to '" + args.out + "'")
+        os.system("cp -r super " + args.out + "; rm -rf super")
+
 
     # Get Compressed File
     compressed_file = ""
