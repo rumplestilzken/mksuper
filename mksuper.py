@@ -108,7 +108,7 @@ def main():
             main_b_max_size = 4831838208
             is_seamless_update = True
         case DeviceType.Jelly2E:
-            super_max_size = 9663676416
+            super_max_size = 5368709120
             main_a_max_size = 4831838208
             main_b_max_size = 4831838208
             is_seamless_update = True
@@ -129,8 +129,9 @@ def main():
         else:
             print("Copying '" + gargoyle_rom_path + "' to " + super_path + "/custom/system_a.img")
             shutil.copyfile(gargoyle_rom_path, super_path + "/custom/system_a.img")
-            print("Copying '" + super_path + "/stock/system_a.img' to " + super_path + "/custom/system_b.img")
-            shutil.copyfile(super_path + "/stock/system_a.img", super_path + "/custom/system_b.img")
+            # print("Copying '" + super_path + "/stock/system_a.img' to " + super_path + "/custom/system_b.img")
+            # shutil.copyfile(super_path + "/stock/system_a.img", super_path + "/custom/system_b.img")
+            shutil.copyfile(super_path + "/stock/system_b.img", super_path + "/custom/system_b.img")
     else:  # Repack
         if not dev == DeviceType.Tank and not dev == DeviceType.Jelly2E:
             print("Copying '" + super_path + "/stock/system.img' to " + super_path + "/custom/system.img")
