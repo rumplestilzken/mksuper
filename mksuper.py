@@ -41,7 +41,8 @@ def usage():
     -repack: repacks stock image
     -dev: slim, pocket, tank, jelly2e, atoml automatically detected from gargoyle img if provided.
     -gsi: path to raw GSI image
-    -out: output path of super image """)
+    -out: output path of super image
+    -no-ouput: produce a super image without product partitions """)
 
 
 def parse_arguments():
@@ -51,6 +52,7 @@ def parse_arguments():
     parser.add_argument("-gsi", required=False, type=str, default=None)
     parser.add_argument("-out", required=False, type=str, default=None)
     parser.add_argument("-super_path", required=False, type=str, default=None)
+    parser.add_argument("-no-product", required=False, action="store_false", default=None)
     return parser.parse_args()
 
 
@@ -151,8 +153,12 @@ def main():
         system_size = os.path.getsize(super_path + "/custom/system.img")
         product_size = os.path.getsize(super_path + "/custom/product.img")
         vendor_size = os.path.getsize(super_path + "/custom/vendor.img")
-        group_size = product_size + vendor_size + system_size
-        print("New product Size '" + str(product_size) + "' bytes")
+        group_size = vendor_size + system_size
+
+        if args.no_product is None:
+            group_size =  product_size + group_size
+            print("New product Size '" + str(product_size) + "' bytes")
+
         print("New vendor Size '" + str(vendor_size) + "' bytes")
         print("New system Size '" + str(system_size) + "' bytes")
         print("New group Size '" + str(group_size) + "' bytes")
@@ -161,12 +167,22 @@ def main():
     else:
         system_a_size = os.path.getsize(super_path + "/custom/system_a.img")
         system_b_size = os.path.getsize(super_path + "/custom/system_b.img")
-        product_a_size = os.path.getsize(super_path + "/custom/product_a.img")
-        product_b_size = os.path.getsize(super_path + "/custom/product_b.img")
+
+        if args.no_product is None:
+            product_a_size = os.path.getsize(super_path + "/custom/product_a.img")
+            product_b_size = os.path.getsize(super_path + "/custom/product_b.img")
         vendor_a_size = os.path.getsize(super_path + "/custom/vendor_a.img")
         vendor_b_size = os.path.getsize(super_path + "/custom/vendor_b.img")
-        main_a_size = system_a_size + product_a_size + vendor_a_size
-        main_b_size = system_b_size + product_b_size + vendor_b_size
+        main_a_size = system_a_size + vendor_a_size
+
+        if args.no_product is None:
+            main_a_size = product_a_size + main_a_size
+
+        main_b_size = system_b_size + vendor_b_size
+
+        if args.no_product is None:
+            main_b_size =  product_b_size + main_b_size
+
         default_size = 0
         metadata_slots = 3
         super_size = default_size + main_a_size + main_b_size + metadata_size
@@ -175,11 +191,13 @@ def main():
         print("main_b max Size '" + str(main_b_max_size) + "' bytes")
         print("New default Size '" + str(default_size) + "' bytes")
         print("New main_a Size '" + str(main_a_size) + "' bytes")
-        print("New product_a Size '" + str(product_a_size) + "' bytes")
+        if args.no_product is None:
+            print("New product_a Size '" + str(product_a_size) + "' bytes")
         print("New vendor_a Size '" + str(vendor_a_size) + "' bytes")
         print("New system_a Size '" + str(system_a_size) + "' bytes")
         print("New main_b Size '" + str(main_b_size) + "' bytes")
-        print("New product_b Size '" + str(product_b_size) + "' bytes")
+        if args.no_product is None:
+            print("New product_b Size '" + str(product_b_size) + "' bytes")
         print("New vendor_b Size '" + str(vendor_b_size) + "' bytes")
         print("New system_b Size '" + str(system_b_size) + "' bytes")
 
@@ -213,7 +231,8 @@ def main():
         lpmake_command += " --group=main:" + str(group_size)
         lpmake_command += " --partition system:none:" + str(system_size) + ":main --image system=" + super_path + "/custom/system.img"
         lpmake_command += " --partition vendor:none:" + str(vendor_size) + ":main --image vendor=" + super_path + "/custom/vendor.img"
-        lpmake_command += " --partition product:none:" + str(product_size) + ":main --image " \
+        if args.no_product is None:
+            lpmake_command += " --partition product:none:" + str(product_size) + ":main --image " \
                                                                              "product=" + super_path + "/custom/product.img"
     else:
         # lpmake_command += " --group default:" + str(default_size)
@@ -221,9 +240,10 @@ def main():
         lpmake_command += " --group main_b:" + str(main_b_size)
         lpmake_command += " --partition vendor_b:none:" + str(vendor_b_size) + ":main_b --image " \
                                                                                "vendor_b=" + super_path + "/custom/vendor_b.img"
-        lpmake_command += " --partition product_a:none:" + str(product_a_size) + ":main_a --image " \
+        if args.no_product is None:
+            lpmake_command += " --partition product_a:none:" + str(product_a_size) + ":main_a --image " \
                                                                                  "product_a=" + super_path + "/custom/product_a.img"
-        lpmake_command += " --partition product_b:none:" + str(product_b_size) + ":main_b --image " \
+            lpmake_command += " --partition product_b:none:" + str(product_b_size) + ":main_b --image " \
                                                                                  "product_b=" + super_path + "/custom/product_b.img"
         lpmake_command += " --partition system_a:none:" + str(system_a_size) + ":main_a --image " \
                                                                                "system_a=" + super_path + "/custom/system_a.img"
