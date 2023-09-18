@@ -5,6 +5,8 @@ These scripts assume you are on an ubuntu based distro. You may need to
 adjust the scripts or run the commands individually on your machine to get the
 desired results.
 
+Requires python3
+
 ## Supported Devices
 * Titan Pocket
 * Titan Slim
