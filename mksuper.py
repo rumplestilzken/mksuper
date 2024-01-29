@@ -42,7 +42,7 @@ def usage():
     -dev: slim, pocket, tank, jelly2e, atoml automatically detected from gargoyle img if provided.
     -gsi: path to raw GSI image
     -out: output path of super image
-    -no-ouput: produce a super image without product partitions """)
+    -no-product: produce a super image without product partitions """)
 
 
 def parse_arguments():
