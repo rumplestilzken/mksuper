@@ -97,10 +97,19 @@ def main():
     else:
         # Tank
         # Jelly 2E
+        # Tank Mini
         shutil.copyfile("super/stock/vendor_a.img", "super/custom/vendor_a.img")
         shutil.copyfile("super/stock/vendor_b.img", "super/custom/vendor_b.img")
         shutil.copyfile("super/stock/product_a.img", "super/custom/product_a.img")
         shutil.copyfile("super/stock/product_b.img", "super/custom/product_b.img")
+
+        try: #Tank Mini
+            shutil.copyfile("super/stock/odm_dlkm_a.img", "super/custom/odm_dlkm_a.img")
+            shutil.copyfile("super/stock/odm_dlkm_b.img", "super/custom/odm_dlkm_b.img")
+            shutil.copyfile("super/stock/vendor_dlkm_a.img", "super/custom/vendor_dlkm_a.img")
+            shutil.copyfile("super/stock/vendor_dlkm_b.img", "super/custom/vendor_dlkm_b.img")
+        except :
+            ""
 
     if args.out is not None:
         print("Copying super to '" + args.out + "'")

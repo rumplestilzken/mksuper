@@ -11,6 +11,7 @@ class DeviceType(Enum):
     Pocket = "pocket"
     Slim = "slim"
     Tank = "tank"
+    Tank_Mini = "tank_mini"
     Jelly2E = "jelly2e"
     AtomL = "atoml"
 
@@ -39,7 +40,7 @@ class EnumAction(Action):
 def usage():
     print("""mksuper.py
     -repack: repacks stock image
-    -dev: slim, pocket, tank, jelly2e, atoml automatically detected from gargoyle img if provided.
+    -dev: slim, pocket, tank, jelly2e, atoml, tank_mini automatically detected from gargoyle img if provided.
     -gsi: path to raw GSI image
     -out: output path of super image
     -no-product: produce a super image without product partitions """)
@@ -90,6 +91,8 @@ def main():
             dev = DeviceType.Pocket
         if "tank" in gargoyle_rom_path:
             dev = DeviceType.Tank
+        if "tank_mini" in gargoyle_rom_path:
+            dev = DeviceType.Tank_Mini
         if "jelly2e" in gargoyle_rom_path:
             dev = DeviceType.Jelly2E
         if "atoml" in gargoyle_rom_path:
@@ -114,6 +117,11 @@ def main():
             main_a_max_size = 4831838208
             main_b_max_size = 4831838208
             is_seamless_update = True
+        case DeviceType.Tank_Mini:
+            super_max_size = 19323158528
+            main_a_max_size = 9661579264
+            main_b_max_size = 9661579264
+            is_seamless_update = True
         case _:
             print("Device Not Detected. Are you using a gargoyle GSI image? Located at mksuper/*.img?")
             quit()
@@ -125,7 +133,7 @@ def main():
         super_path = args.super_path + "/"
 
     if args.repack is None:
-        if not dev == DeviceType.Tank and not dev == DeviceType.Jelly2E:
+        if not dev == DeviceType.Tank and not dev == DeviceType.Tank_Mini and not dev == DeviceType.Jelly2E:
             print("Copying '" + gargoyle_rom_path + "' to " + super_path +"/custom/system.img")
             shutil.copyfile(gargoyle_rom_path, super_path + "/custom/system.img")
         else:
@@ -148,6 +156,10 @@ def main():
 
     metadata_slots = 0
     metadata_size = 65536
+    odm_dlkm_a_size = 0
+    odm_dlkm_b_size = 0
+    vendor_dlkm_a_size = 0
+    vendor_dlkm_b_size = 0
 
     if not is_seamless_update:
         system_size = os.path.getsize(super_path + "/custom/system.img")
@@ -173,6 +185,7 @@ def main():
             product_b_size = os.path.getsize(super_path + "/custom/product_b.img")
         vendor_a_size = os.path.getsize(super_path + "/custom/vendor_a.img")
         vendor_b_size = os.path.getsize(super_path + "/custom/vendor_b.img")
+
         main_a_size = system_a_size + vendor_a_size
 
         if args.no_product is None:
@@ -182,6 +195,15 @@ def main():
 
         if args.no_product is None:
             main_b_size =  product_b_size + main_b_size
+
+        if dev is DeviceType.Tank_Mini:
+            odm_dlkm_a_size = os.path.getsize(super_path + "/custom/odm_dlkm_a.img")
+            vendor_dlkm_a_size = os.path.getsize(super_path + "/custom/vendor_dlkm_a.img")
+            main_a_size = main_a_size + odm_dlkm_a_size + vendor_dlkm_a_size
+
+            odm_dlkm_b_size = os.path.getsize(super_path + "/custom/odm_dlkm_b.img")
+            vendor_dlkm_b_size = os.path.getsize(super_path + "/custom/vendor_dlkm_b.img")
+            main_b_size = main_b_size + odm_dlkm_b_size + vendor_dlkm_b_size
 
         default_size = 0
         metadata_slots = 3
@@ -200,6 +222,13 @@ def main():
             print("New product_b Size '" + str(product_b_size) + "' bytes")
         print("New vendor_b Size '" + str(vendor_b_size) + "' bytes")
         print("New system_b Size '" + str(system_b_size) + "' bytes")
+
+        if dev is DeviceType.Tank_Mini:
+            print("New odm_dlkm_a Size '" + str(odm_dlkm_a_size) + "' bytes")
+            print("New odm_dlkm_b Size '" + str(odm_dlkm_b_size) + "' bytes")
+            print("New vendor_dlkm_a Size '" + str(vendor_dlkm_a_size) + "' bytes")
+            print("New vendor_dlkm_b Size '" + str(vendor_dlkm_b_size) + "' bytes")
+
 
     print("New super Size '" + str(super_size) + "' bytes")
 
@@ -251,6 +280,16 @@ def main():
                                                                                "system_b=" + super_path + "/custom/system_b.img"
         lpmake_command += " --partition vendor_a:none:" + str(vendor_a_size) + ":main_a --image " \
                                                                                "vendor_a=" + super_path + "/custom/vendor_a.img"
+        if dev is DeviceType.Tank_Mini:
+            lpmake_command += " --partition odm_dlkm_a:none:" + str(odm_dlkm_a_size) + ":main_a --image " \
+                                                                                   "odm_dlkm_a=" + super_path + "/custom/odm_dlkm_a.img"
+            lpmake_command += " --partition odm_dlkm_b:none:" + str(odm_dlkm_b_size) + ":main_b --image " \
+                                                                                       "odm_dlkm_b=" + super_path + "/custom/odm_dlkm_b.img"
+            lpmake_command += " --partition vendor_dlkm_a:none:" + str(vendor_dlkm_a_size) + ":main_a --image " \
+                                                                                       "vendor_dlkm_a=" + super_path + "/custom/vendor_dlkm_a.img"
+            lpmake_command += " --partition vendor_dlkm_b:none:" + str(vendor_dlkm_b_size) + ":main_b --image " \
+                                                                                             "vendor_dlkm_b=" + super_path + "/custom/vendor_dlkm_b.img"
+
     output_path = here + "/super/super.new.img"
 
     if args.out is not None:
