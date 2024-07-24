@@ -103,7 +103,7 @@ def main():
         shutil.copyfile("super/stock/product_a.img", "super/custom/product_a.img")
         shutil.copyfile("super/stock/product_b.img", "super/custom/product_b.img")
 
-        try: #Tank Mini
+        try: #Tank Mini and Tank
             shutil.copyfile("super/stock/odm_dlkm_a.img", "super/custom/odm_dlkm_a.img")
             shutil.copyfile("super/stock/odm_dlkm_b.img", "super/custom/odm_dlkm_b.img")
             shutil.copyfile("super/stock/vendor_dlkm_a.img", "super/custom/vendor_dlkm_a.img")

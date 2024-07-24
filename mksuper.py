@@ -54,6 +54,7 @@ def parse_arguments():
     parser.add_argument("-out", required=False, type=str, default=None)
     parser.add_argument("-super_path", required=False, type=str, default=None)
     parser.add_argument("-no-product", required=False, action="store_false", default=None)
+    parser.add_argument("-command", required=False, action="store_false", default=None)
     return parser.parse_args()
 
 
@@ -196,7 +197,7 @@ def main():
         if args.no_product is None:
             main_b_size =  product_b_size + main_b_size
 
-        if dev is DeviceType.Tank_Mini:
+        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank:
             odm_dlkm_a_size = os.path.getsize(super_path + "/custom/odm_dlkm_a.img")
             vendor_dlkm_a_size = os.path.getsize(super_path + "/custom/vendor_dlkm_a.img")
             main_a_size = main_a_size + odm_dlkm_a_size + vendor_dlkm_a_size
@@ -267,6 +268,17 @@ def main():
         # lpmake_command += " --group default:" + str(default_size)
         lpmake_command += " --group=main_a:" + str(main_a_size)
         lpmake_command += " --group main_b:" + str(main_b_size)
+
+        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank:
+            lpmake_command += " --partition odm_dlkm_a:none:" + str(odm_dlkm_a_size) + ":main_a --image " \
+                                                                                   "odm_dlkm_a=" + super_path + "/custom/odm_dlkm_a.img"
+            lpmake_command += " --partition odm_dlkm_b:none:" + str(odm_dlkm_b_size) + ":main_b --image " \
+                                                                                       "odm_dlkm_b=" + super_path + "/custom/odm_dlkm_b.img"
+            lpmake_command += " --partition vendor_dlkm_a:none:" + str(vendor_dlkm_a_size) + ":main_a --image " \
+                                                                                       "vendor_dlkm_a=" + super_path + "/custom/vendor_dlkm_a.img"
+            lpmake_command += " --partition vendor_dlkm_b:none:" + str(vendor_dlkm_b_size) + ":main_b --image " \
+                                                                                             "vendor_dlkm_b=" + super_path + "/custom/vendor_dlkm_b.img"
+
         lpmake_command += " --partition vendor_b:none:" + str(vendor_b_size) + ":main_b --image " \
                                                                                "vendor_b=" + super_path + "/custom/vendor_b.img"
         if args.no_product is None:
@@ -280,15 +292,6 @@ def main():
                                                                                "system_b=" + super_path + "/custom/system_b.img"
         lpmake_command += " --partition vendor_a:none:" + str(vendor_a_size) + ":main_a --image " \
                                                                                "vendor_a=" + super_path + "/custom/vendor_a.img"
-        if dev is DeviceType.Tank_Mini:
-            lpmake_command += " --partition odm_dlkm_a:none:" + str(odm_dlkm_a_size) + ":main_a --image " \
-                                                                                   "odm_dlkm_a=" + super_path + "/custom/odm_dlkm_a.img"
-            lpmake_command += " --partition odm_dlkm_b:none:" + str(odm_dlkm_b_size) + ":main_b --image " \
-                                                                                       "odm_dlkm_b=" + super_path + "/custom/odm_dlkm_b.img"
-            lpmake_command += " --partition vendor_dlkm_a:none:" + str(vendor_dlkm_a_size) + ":main_a --image " \
-                                                                                       "vendor_dlkm_a=" + super_path + "/custom/vendor_dlkm_a.img"
-            lpmake_command += " --partition vendor_dlkm_b:none:" + str(vendor_dlkm_b_size) + ":main_b --image " \
-                                                                                             "vendor_dlkm_b=" + super_path + "/custom/vendor_dlkm_b.img"
 
     output_path = here + "/super/super.new.img"
 
@@ -298,6 +301,10 @@ def main():
     lpmake_command += " --sparse --output " + output_path
 
     print("lpmake command:\n\t" + lpmake_command)
+
+    if args.command is not None:
+        quit()
+
     os.system(lpmake_command + "\n")
 
     print("New super image created: " + here + "/super/super.new.img")
