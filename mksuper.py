@@ -224,7 +224,7 @@ def main():
         print("New vendor_b Size '" + str(vendor_b_size) + "' bytes")
         print("New system_b Size '" + str(system_b_size) + "' bytes")
 
-        if dev is DeviceType.Tank_Mini or dev is Device.Tank:
+        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank:
             print("New odm_dlkm_a Size '" + str(odm_dlkm_a_size) + "' bytes")
             print("New odm_dlkm_b Size '" + str(odm_dlkm_b_size) + "' bytes")
             print("New vendor_dlkm_a Size '" + str(vendor_dlkm_a_size) + "' bytes")
