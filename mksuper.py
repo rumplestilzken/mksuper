@@ -251,7 +251,7 @@ def main():
     #            quit()
 
     lpmake_command = "cd " + super_path + ";"
-    lpmake_command += here + "/lpunpack_and_lpmake/bin/lpmake"
+    lpmake_command += here + "/bin/lpmake"
     lpmake_command += " --metadata-size " + str(metadata_size)
     lpmake_command += " --super-name super "
     lpmake_command += " --metadata-slots=" + str(metadata_slots)

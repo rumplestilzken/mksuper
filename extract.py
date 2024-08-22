@@ -79,10 +79,10 @@ def main():
     shutil.copyfile(stock_rom_location + "/super.img", here + "/super/stock/super.img")
 
     print("Unpacking super.img to ext4.img")
-    os.system(here + "/simg2img/simg2img super/stock/super.img super/stock/super.ext4.img")
+    os.system(here + "/bin/simg2img super/stock/super.img super/stock/super.ext4.img")
 
     print("Unpacking super.ext4.img")
-    os.system("cd super/stock/;" + here + "/lpunpack_and_lpmake/bin/lpunpack super.ext4.img; cd ../..;")
+    os.system("cd super/stock/;" + here + "/bin/lpunpack super.ext4.img; cd ../..;")
 
     is_seamless_update = False
     if os.path.isfile("super/stock/system_a.img"):

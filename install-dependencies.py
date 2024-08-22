@@ -6,8 +6,6 @@ import sys
 import subprocess
 
 def main():
-    install_lpmake=True
-    install_simg2img=True
     print("Starting Script")
     print("There are several dependencies needed.")
     answer = input("Would you like to try to install them?(Y,n):");
@@ -18,23 +16,6 @@ def main():
         else:
             print("You need to manually install git libc++-dev, clang, g++, make and libz-dev to continue with the process")
             answer = input("Are these already installed?(Y,n):")
-            if not answer == "" or answer == "Y" or answer == "y":
-                install_lpmake=False
-                install_simg2img=False
-    if not os.path.exists("./lpunpack_and_lpmake"):
-        print("Installing lpunpack_and_lpmake")
-        os.system("git clone --quiet https://github.com/rumplestilzken/lpunpack_and_lpmake.git lpunpack_and_lpmake")
-    if not os.path.exists("./lpunpack_and_lpmake/bin"):
-        print("Building lpunpack_and_lpmake")
-        os.system("cd lpunpack_and_lpmake; ./make.sh; cd ..")
-    if os.path.exists("./lpunpack_and_lpmake/bin"):
-        os.system("chmod +x lpunpack_and_lpmake/bin/*")
-    if not os.path.exists("./simg2img"):
-        print("Installing simg2img")
-        os.system("git clone --quiet https://github.com/rumplestilzken/simg2img.git simg2img")
-    if not os.path.exists("./simg2img/simg2img"):
-        print("Building simg2img")
-        os.system("cd simg2img; make; cd ..;")
     print("Script Complete")
 
 if __name__ == '__main__':
