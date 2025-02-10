@@ -128,8 +128,8 @@ def main():
             is_seamless_update = True
         case DeviceType.JellyMax:
             super_max_size = 9663676416
-            main_a_max_size = 7000000000
-            main_b_max_size = 2063676416
+            main_a_max_size = 9661579264
+            main_b_max_size = 9661579264
             is_seamless_update = True
         case _:
             print("Device Not Detected. Are you using a gargoyle GSI image? Located at mksuper/*.img?")
@@ -218,7 +218,7 @@ def main():
 
         if dev is DeviceType.JellyMax:
             system_ext_a_size = os.path.getsize(super_path + "/custom/system_ext_a.img")
-            main_b_size = main_b_size + system_ext_a_size
+            main_a_size = main_a_size + system_ext_a_size
             system_ext_b_size = os.path.getsize(super_path + "/custom/system_ext_b.img")
             main_b_size = main_b_size + system_ext_b_size
 
