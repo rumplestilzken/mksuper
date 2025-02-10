@@ -108,6 +108,8 @@ def main():
             shutil.copyfile("super/stock/odm_dlkm_b.img", "super/custom/odm_dlkm_b.img")
             shutil.copyfile("super/stock/vendor_dlkm_a.img", "super/custom/vendor_dlkm_a.img")
             shutil.copyfile("super/stock/vendor_dlkm_b.img", "super/custom/vendor_dlkm_b.img")
+            shutil.copyfile("super/stock/system_ext_a.img", "super/custom/system_ext_a.img")
+            shutil.copyfile("super/stock/system_ext_b.img", "super/custom/system_ext_b.img")
         except :
             ""
 
