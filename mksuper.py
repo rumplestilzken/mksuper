@@ -14,6 +14,7 @@ class DeviceType(Enum):
     Tank_Mini = "tank_mini"
     Jelly2E = "jelly2e"
     AtomL = "atoml"
+    JellyMax = "jellymax"
 
 
 class EnumAction(Action):
@@ -98,6 +99,8 @@ def main():
             dev = DeviceType.Jelly2E
         if "atoml" in gargoyle_rom_path:
             dev = DeviceType.AtomL
+        if "maX" in gargoyle_rom_path:
+            dev = DeviceType.JellyMax
     else:
         dev = args.dev
 
@@ -119,7 +122,12 @@ def main():
             main_b_max_size = 4831838208
             is_seamless_update = True
         case DeviceType.Tank_Mini:
-            super_max_size = 19323158528
+            super_max_size = 9663676416
+            main_a_max_size = 9661579264
+            main_b_max_size = 9661579264
+            is_seamless_update = True
+        case DeviceType.JellyMax:
+            super_max_size = 9663676416
             main_a_max_size = 9661579264
             main_b_max_size = 9661579264
             is_seamless_update = True
@@ -161,6 +169,8 @@ def main():
     odm_dlkm_b_size = 0
     vendor_dlkm_a_size = 0
     vendor_dlkm_b_size = 0
+    system_ext_a_size = 0
+    system_ext_b_size = 0
 
     if not is_seamless_update:
         system_size = os.path.getsize(super_path + "/custom/system.img")
@@ -197,7 +207,7 @@ def main():
         if args.no_product is None:
             main_b_size =  product_b_size + main_b_size
 
-        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank:
+        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank or dev is DeviceType.Jelly2E:
             odm_dlkm_a_size = os.path.getsize(super_path + "/custom/odm_dlkm_a.img")
             vendor_dlkm_a_size = os.path.getsize(super_path + "/custom/vendor_dlkm_a.img")
             main_a_size = main_a_size + odm_dlkm_a_size + vendor_dlkm_a_size
@@ -205,6 +215,12 @@ def main():
             odm_dlkm_b_size = os.path.getsize(super_path + "/custom/odm_dlkm_b.img")
             vendor_dlkm_b_size = os.path.getsize(super_path + "/custom/vendor_dlkm_b.img")
             main_b_size = main_b_size + odm_dlkm_b_size + vendor_dlkm_b_size
+
+        if dev is DeviceType.JellyMax:
+            system_ext_a_size = os.path.getsize(super_path + "/custom/system_ext_a.img")
+            main_b_size = main_b_size + system_ext_a_size
+            system_ext_b_size = os.path.getsize(super_path + "/custom/system_ext_b.img")
+            main_b_size = main_b_size + system_ext_b_size
 
         default_size = 0
         metadata_slots = 3
@@ -224,11 +240,15 @@ def main():
         print("New vendor_b Size '" + str(vendor_b_size) + "' bytes")
         print("New system_b Size '" + str(system_b_size) + "' bytes")
 
-        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank:
+        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank or dev is DeviceType.JellyMax:
             print("New odm_dlkm_a Size '" + str(odm_dlkm_a_size) + "' bytes")
             print("New odm_dlkm_b Size '" + str(odm_dlkm_b_size) + "' bytes")
             print("New vendor_dlkm_a Size '" + str(vendor_dlkm_a_size) + "' bytes")
             print("New vendor_dlkm_b Size '" + str(vendor_dlkm_b_size) + "' bytes")
+
+        if dev is DeviceType.JellyMax:
+            print("New system_ext_a Size '" + str(system_ext_a_size) + "' bytes")
+            print("New system_ext_b Size '" + str(system_ext_b_size) + "' bytes")
 
 
     print("New super Size '" + str(super_size) + "' bytes")
@@ -278,6 +298,12 @@ def main():
                                                                                        "vendor_dlkm_a=" + super_path + "/custom/vendor_dlkm_a.img"
             lpmake_command += " --partition vendor_dlkm_b:none:" + str(vendor_dlkm_b_size) + ":main_b --image " \
                                                                                              "vendor_dlkm_b=" + super_path + "/custom/vendor_dlkm_b.img"
+
+        if dev is DeviceType.JellyMax:
+            lpmake_command += " --partition system_ext_a:none:" + str(system_ext_a_size) + ":main_a --image " \
+                                                                                   "system_ext_a=" + super_path + "/custom/system_ext_a.img"
+            lpmake_command += " --partition system_ext_b:none:" + str(system_ext_b_size) + ":main_b --image " \
+                                                                                       "system_ext_b=" + super_path + "/custom/system_ext_b.img"
 
         lpmake_command += " --partition vendor_b:none:" + str(vendor_b_size) + ":main_b --image " \
                                                                                "vendor_b=" + super_path + "/custom/vendor_b.img"
