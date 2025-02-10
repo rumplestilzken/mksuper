@@ -85,7 +85,7 @@ def main():
     os.system("cd super/stock/;" + here + "/bin/lpunpack super.ext4.img; cd ../..;")
 
     is_seamless_update = False
-    if os.path.isfile("super/stock/system_a.img"):
+    if os.path.isfile("super/stock/system_a.img") or os.path.isfile("super/stock/system_ext_a.img"):
         is_seamless_update = True
 
     print("Copying images to super/custom")

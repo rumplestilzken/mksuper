@@ -128,8 +128,8 @@ def main():
             is_seamless_update = True
         case DeviceType.JellyMax:
             super_max_size = 9663676416
-            main_a_max_size = 9661579264
-            main_b_max_size = 9661579264
+            main_a_max_size = 7000000000
+            main_b_max_size = 2063676416
             is_seamless_update = True
         case _:
             print("Device Not Detected. Are you using a gargoyle GSI image? Located at mksuper/*.img?")
@@ -142,7 +142,7 @@ def main():
         super_path = args.super_path + "/"
 
     if args.repack is None:
-        if not dev == DeviceType.Tank and not dev == DeviceType.Tank_Mini and not dev == DeviceType.Jelly2E:
+        if not dev == DeviceType.Tank and not dev == DeviceType.Tank_Mini and not dev == DeviceType.Jelly2E and not dev == DeviceType.JellyMax:
             print("Copying '" + gargoyle_rom_path + "' to " + super_path +"/custom/system.img")
             shutil.copyfile(gargoyle_rom_path, super_path + "/custom/system.img")
         else:
@@ -179,7 +179,7 @@ def main():
         group_size = vendor_size + system_size
 
         if args.no_product is None:
-            group_size =  product_size + group_size
+            group_size = product_size + group_size
             print("New product Size '" + str(product_size) + "' bytes")
 
         print("New vendor Size '" + str(vendor_size) + "' bytes")
@@ -207,7 +207,7 @@ def main():
         if args.no_product is None:
             main_b_size =  product_b_size + main_b_size
 
-        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank or dev is DeviceType.Jelly2E:
+        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank or dev is DeviceType.Jelly2E or dev is DeviceType.JellyMax:
             odm_dlkm_a_size = os.path.getsize(super_path + "/custom/odm_dlkm_a.img")
             vendor_dlkm_a_size = os.path.getsize(super_path + "/custom/vendor_dlkm_a.img")
             main_a_size = main_a_size + odm_dlkm_a_size + vendor_dlkm_a_size
@@ -286,10 +286,10 @@ def main():
                                                                              "product=" + super_path + "/custom/product.img"
     else:
         # lpmake_command += " --group default:" + str(default_size)
-        lpmake_command += " --group=main_a:" + str(main_a_size)
-        lpmake_command += " --group main_b:" + str(main_b_size)
+        lpmake_command += " --group=main_a:" + str(main_a_max_size)
+        lpmake_command += " --group main_b:" + str(main_b_max_size)
 
-        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank:
+        if dev is DeviceType.Tank_Mini or dev is DeviceType.Tank or dev is DeviceType.JellyMax:
             lpmake_command += " --partition odm_dlkm_a:none:" + str(odm_dlkm_a_size) + ":main_a --image " \
                                                                                    "odm_dlkm_a=" + super_path + "/custom/odm_dlkm_a.img"
             lpmake_command += " --partition odm_dlkm_b:none:" + str(odm_dlkm_b_size) + ":main_b --image " \
@@ -312,10 +312,12 @@ def main():
                                                                                  "product_a=" + super_path + "/custom/product_a.img"
             lpmake_command += " --partition product_b:none:" + str(product_b_size) + ":main_b --image " \
                                                                                  "product_b=" + super_path + "/custom/product_b.img"
+
         lpmake_command += " --partition system_a:none:" + str(system_a_size) + ":main_a --image " \
                                                                                "system_a=" + super_path + "/custom/system_a.img"
         lpmake_command += " --partition system_b:none:" + str(system_b_size) + ":main_b --image " \
                                                                                "system_b=" + super_path + "/custom/system_b.img"
+
         lpmake_command += " --partition vendor_a:none:" + str(vendor_a_size) + ":main_a --image " \
                                                                                "vendor_a=" + super_path + "/custom/vendor_a.img"
 
